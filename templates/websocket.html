@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>投票</h1>
+    <div id="toupiao">
+    {%for k,v in users.items()%}
+        <li cid="{{k}}">{{v.name}} <span>{{v.count}}</span></li>
+
+    {%endfor%}
+    </div>
+
+    <div id="content"></div>
+</body>
+<script>
+    $(function(){
+        var ws = new  WebSocket('ws://127.0.0.1:5000/message');
+        ws.onmessage = function(event){
+            // var response = event.data;
+            var response = JSON.parse(event.data)
+            $("li[cid='"+response.cid+"']").find('span').text(response.count)
+            // var newTag = document.createElement('div');
+            // newTag.innerHTML = response;
+            // document.getElementById('content').appendChild(newTag)
+        };
+        $('#toupiao li').click(function(){
+            var cid = $(this).attr('cid');
+            ws.send(cid);
+        });
+    })
+    
+</script>
+</html>
